@@ -32,7 +32,7 @@ jobs:
 
     - name: update manifests (image tag)
       run: |
-        sed -i "s/latest/${{ github.sha }}" deploy/deployment.yaml
+        sed -i "s|latest|${{ github.sha }}" deploy/deployment.yaml
 
     - name: commit and push manifest changes
       run: |   
