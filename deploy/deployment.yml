@@ -14,6 +14,8 @@ spec:
       labels:
         app: hello-gitops
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: hello-gitops
         image: arodemoregistry.azurecr.io/hello-gitops:latest
