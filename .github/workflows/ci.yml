@@ -30,16 +30,16 @@ jobs:
       run: |
         podman push  ${{ secrets.ACR_Login_SERVER}}/hello-gitops:${{ github.sha}}
 
-    - name: Update manifest image tag
-      run: |
-        sed -i "s|latest|${GITHUB_SHA}|" deploy/deployment.yml
+    # - name: Update manifest image tag
+    #   run: |
+    #     sed -i "s|latest|${GITHUB_SHA}|" deploy/deployment.yml
 
 
-    - name: commit and push manifest changes
-      run: |   
-        git config user.name "ci-bot"
-        git config user.email "ci@ci.com"
-        git add deploy/deployment.yml
-        git commit -m "update tag to ${{ github.sha}}"
-        git push
+    # - name: commit and push manifest changes
+    #   run: |   
+    #     git config user.name "ci-bot"
+    #     git config user.email "ci@ci.com"
+    #     git add deploy/deployment.yml
+    #     git commit -m "update tag to ${{ github.sha}}"
+    #     git push
 
