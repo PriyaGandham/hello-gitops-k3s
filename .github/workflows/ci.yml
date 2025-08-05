@@ -1,0 +1,42 @@
+name: ci 
+on: 
+  push:
+  branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install Podman
+      run: |
+        sudo apt update
+        sudo apt install -y podman
+
+    - name: Build container image
+      run: |
+        podman build -t ${{ secrets.ACR_Login_SERVER}}/hello-gitops:${{ github.sha}}
+
+    - name: Login to ACR
+      run: |
+        podman login ${{ secrets.ACR_Login_SERVER}} -u ${{secrets.ACR_USERNAME}}  -p ${{ secrets.ACR_PASSWORD}}
+
+    - name: push image
+      run: |
+        podman push  ${{ secrets.ACR_Login_SERVER}}/hello-gitops:${{ github.sha}}
+
+    - name: update manifests (image tag)
+      run: |
+        sed -i "s/latest/${{ github.sha }}" deploy/deployment.yaml
+
+    - name: commit and push manifest changes
+      run: |   
+        git config user.name "ci-bot"
+        git config user.email "ci@ci.com"
+        git add deploy/deployment.yml
+        git commit -m "update tag to ${{ github.sha}}"
+        git push
+

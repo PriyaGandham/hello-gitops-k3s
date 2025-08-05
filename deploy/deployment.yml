@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+Metadata:
+  name: hello-gitops
+spec:
+  replicas: 1
+  selector:
+     matchLabels:
+       app: hello-gitops
+  template:
+    metadata:
+      labels:
+        app: hello-gitops
+    spec:
+      containers:
+      - name: hello-gitops
+        image: arodemoregistry.azurecr.io/hello-gitops:latest
+        ports:
+          - containerPort: 80
