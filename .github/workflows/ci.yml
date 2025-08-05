@@ -19,7 +19,8 @@ jobs:
 
     - name: Build container image
       run: |
-        podman build -t ${{ secrets.ACR_Login_SERVER}}/hello-gitops:${{ github.sha}}
+        podman build -t ${{ secrets.ACR_LOGIN_SERVER }}/hello-gitops:${{ github.sha }} -f Dockerfile .
+
 
     - name: Login to ACR
       run: |
