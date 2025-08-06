@@ -21,7 +21,7 @@ jobs:
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
     - name: Fetch secrets from Azure Key Vault
-      uses: azure/actions/keyvault-secrets@v1
+      uses: azure/keyvault-secrets@v1
       with:
         keyvault: 'myKeyVaultDemo2'
         secrets: |
