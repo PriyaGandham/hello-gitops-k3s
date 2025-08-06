@@ -1,5 +1,6 @@
-name: ci 
-on: 
+name: ci
+
+on:
   push:
     branches:
       - main
@@ -12,34 +13,87 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Azure Login via OIDC
+      uses: azure/login@v2
+      with:
+        client-id: ${{ vars.AZURE_CLIENT_ID }}
+        tenant-id: ${{ vars.AZURE_TENANT_ID }}
+        subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Fetch secrets from Azure Key Vault
+      uses: azure/keyvault@v1
+      with:
+        keyvault: 'myKeyVaultDemo2 '
+        secrets: |
+          ACR-USERNAME
+          ACR-PASSWORD
+          ACR-LOGIN-SERVER
+
     - name: Install Podman
       run: |
         sudo apt update
         sudo apt install -y podman
 
+# Build container image with ACR login server from Key Vault
     - name: Build container image
       run: |
-        podman build -t ${{ secrets.ACR_LOGIN_SERVER }}/hello-gitops:${{ github.sha }} -f Dockerfile .
+        podman build -t ${{ steps.get-secrets.outputs.ACR-LOGIN-SERVER }}/hello:${{ github.sha }} -f Dockerfile .
 
-
+    # Login to ACR
     - name: Login to ACR
       run: |
-        podman login ${{ secrets.ACR_Login_SERVER}} -u ${{secrets.ACR_USERNAME}}  -p ${{ secrets.ACR_PASSWORD}}
+        podman login ${{ steps.get-secrets.outputs.ACR-LOGIN-SERVER }} \
+          -u "${{ steps.get-secrets.outputs.ACR-USERNAME }}" \
+          -p "${{ steps.get-secrets.outputs.ACR-PASSWORD }}"
 
-    - name: push image
+    # Push image
+    - name: Push image to ACR
       run: |
-        podman push  ${{ secrets.ACR_Login_SERVER}}/hello-gitops:${{ github.sha}}
-
-    # - name: Update manifest image tag
-    #   run: |
-    #     sed -i "s|latest|${GITHUB_SHA}|" deploy/deployment.yml
+        podman push ${{ steps.get-secrets.outputs.ACR-LOGIN-SERVER }}/hello:${{ github.sha }}
 
 
-    # - name: commit and push manifest changes
-    #   run: |   
-    #     git config user.name "ci-bot"
-    #     git config user.email "ci@ci.com"
-    #     git add deploy/deployment.yml
-    #     git commit -m "update tag to ${{ github.sha}}"
-    #     git push
+# name: ci 
+# on: 
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v4
+
+#     - name: Install Podman
+#       run: |
+#         sudo apt update
+#         sudo apt install -y podman
+
+#     - name: Build container image
+#       run: |
+#         podman build -t ${{ secrets.ACR_LOGIN_SERVER }}/hello-gitops:${{ github.sha }} -f Dockerfile .
+
+
+#     - name: Login to ACR
+#       run: |
+#         podman login ${{ secrets.ACR_Login_SERVER}} -u ${{secrets.ACR_USERNAME}}  -p ${{ secrets.ACR_PASSWORD}}
+
+#     - name: push image
+#       run: |
+#         podman push  ${{ secrets.ACR_Login_SERVER}}/hello-gitops:${{ github.sha}}
+
+#     # - name: Update manifest image tag
+#     #   run: |
+#     #     sed -i "s|latest|${GITHUB_SHA}|" deploy/deployment.yml
+
+
+#     # - name: commit and push manifest changes
+#     #   run: |   
+#     #     git config user.name "ci-bot"
+#     #     git config user.email "ci@ci.com"
+#     #     git add deploy/deployment.yml
+#     #     git commit -m "update tag to ${{ github.sha}}"
+#     #     git push
 
