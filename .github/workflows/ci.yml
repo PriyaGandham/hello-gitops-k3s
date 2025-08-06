@@ -40,10 +40,7 @@ jobs:
       uses: azure/get-keyvault-secrets@v1
       with:
         keyvault: 'myKeyVaultDemo2'
-        secrets: |
-          ACR-LOGIN-SERVER
-          ACR-USERNAME
-          ACR-PASSWORD
+        secrets: ACR-LOGIN-SERVER,ACR-USERNAME,ACR-PASSWORD
 
     - name: Install Podman
       run: |
