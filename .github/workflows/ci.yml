@@ -68,7 +68,7 @@ jobs:
         podman push ${{ steps.get-secrets.outputs.ACR-LOGIN-SERVER }}/hello:${{ github.sha }}
 
 
-# name: ci 
+## name: ci 
 # on: 
 #   push:
 #     branches:
