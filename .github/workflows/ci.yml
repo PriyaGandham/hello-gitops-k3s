@@ -50,7 +50,7 @@ jobs:
         sudo apt update
         sudo apt install -y podman
 
-# Build container image with ACR login server from Key Vault
+    # Build container image with ACR login server from Key Vault
     - name: Build container image
       run: |
         podman build -t ${{ steps.get-secrets.outputs.ACR-LOGIN-SERVER }}/hello:${{ github.sha }} -f Dockerfile .
