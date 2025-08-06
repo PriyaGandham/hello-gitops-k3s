@@ -21,9 +21,9 @@ jobs:
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
     - name: Fetch secrets from Azure Key Vault
-      uses: azure/keyvault@v1
+      uses: azure/actions/keyvault-secrets@v1
       with:
-        keyvault: 'myKeyVaultDemo2 '
+        keyvault: 'myKeyVaultDemo2'
         secrets: |
           ACR-USERNAME
           ACR-PASSWORD
