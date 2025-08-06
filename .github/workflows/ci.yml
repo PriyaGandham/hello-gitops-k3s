@@ -37,6 +37,7 @@ jobs:
         enable-AzPSSession: false
 
     - name: Fetch secrets from Azure Key Vault
+      id: get-secrets
       uses: azure/get-keyvault-secrets@v1
       with:
         keyvault: 'myKeyVaultDemo2'
@@ -51,7 +52,7 @@ jobs:
     - name: Build container image
       run: |
         podman build -t ${{ steps.get-secrets.outputs.ACR-LOGIN-SERVER }}/hello:${{ github.sha }} -f Dockerfile .
-
+        
     # Login to ACR
     - name: Login to ACR
       run: |
