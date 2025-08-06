@@ -41,9 +41,9 @@ jobs:
       with:
         keyvault: 'myKeyVaultDemo2'
         secrets: |
+          ACR-LOGIN-SERVER
           ACR-USERNAME
           ACR-PASSWORD
-          ACR-LOGIN-SERVER
 
     - name: Install Podman
       run: |
