@@ -2,11 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hello-ingress
+  namespace: default
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: hello.local
+    - host: hello.52.191.48.138.nip.io
       http:
         paths:
           - path: /
@@ -16,4 +17,3 @@ spec:
                 name: hello-service
                 port:
                   number: 80
-#ingrss
