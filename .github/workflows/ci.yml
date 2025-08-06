@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write       # REQUIRED for OIDC login
+  contents: read         # optional, but usually needed
+
 jobs:
   build:
     runs-on: ubuntu-latest
