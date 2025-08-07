@@ -17,6 +17,6 @@ spec:
             - name: acr-secret
           containers:
             - name: backstage
-              image: arodemoregistry.azurecr.io/backstage:REPLACE_ME
+              image: arodemoregistry.azurecr.io/backstage:$(github.sha)
               ports:
                 - containerPort: 7007
