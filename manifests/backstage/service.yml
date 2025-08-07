@@ -4,7 +4,7 @@ metadata:
   name: backstage-service
   namespace: backstage
 spec:
-  type: NodePort
+  type: NodePort #porting
   selector:
     app: backstage
   ports:
