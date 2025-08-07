@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backstage
-  namespace: backstage
+  namespace: default
 spec:
   replicas: 1
   selector:
@@ -13,10 +13,10 @@ spec:
       labels:
         app: backstage
     spec:
-          imagePullSecrets:
-            - name: acr-secret
-          containers:
-            - name: backstage
-              image: arodemoregistry.azurecr.io/backstage:313fc6c5194a94a2d4d37a7b64e4ce31068ff021
-              ports:
-                - containerPort: 7007
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: backstage
+          image: arodemoregistry.azurecr.io/backstage:REPLACE_ME
+          ports:
+            - containerPort: 7007
