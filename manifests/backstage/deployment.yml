@@ -13,10 +13,10 @@ spec:
       labels:
         app: backstage
     spec:
-      imagePullSecrets:
-      - name: acr-secret
-      containers:
-      - name: backstage
-        image: arodemoregistry.azurecr.io/backstage:latest
-        ports:
-        - containerPort: 7007
+          imagePullSecrets:
+            - name: acr-secret
+          containers:
+            - name: backstage
+              image: arodemoregistry.azurecr.io/backstage:REPLACE_ME
+              ports:
+                - containerPort: 7007
