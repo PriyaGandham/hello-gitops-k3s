@@ -1,0 +1,12 @@
+# File: dev-team/catalog-info.yaml
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: dev-team
+  description: Development Team for GitOps projects
+spec:
+  type: team
+  profile:
+    displayName: Dev Team
+    email: dev-team@example.com
+  children: []
