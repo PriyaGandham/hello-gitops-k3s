@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: hello-gitops
+  description: A Python app deployed using GitOps
+  annotations:
+    github.com/project-slug: PriyaGandham/hello-gitops-k3s
+    argocd/app-name: hello-gitops  #  ArgoCD app name
+spec:
+  type: service
+  lifecycle: production
+  owner: dev-team
