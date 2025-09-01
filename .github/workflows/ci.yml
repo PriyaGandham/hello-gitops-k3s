@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - priya_kvgha_0109
 
 permissions:
   id-token: write       # REQUIRED for OIDC login
