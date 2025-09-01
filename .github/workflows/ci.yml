@@ -1,4 +1,4 @@
-name: Python App Build and Push with Key Vault Integration
+name: Python App Build and Push with Azure Key Vault
 
 on:
   push:
@@ -7,41 +7,38 @@ on:
       - priya_kvgha_0109
 
 permissions:
-  id-token: write
-  contents: read
+  id-token: write      # Required for OIDC
+  contents: read       # To checkout code
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     env:
-      KEYVAULT_NAME: kv-GHARO    
+      KEYVAULT_NAME: kv-GHARO
       ACR_NAME: kvghaaro
       IMAGE_NAME: python-app
+      AZURE_CLIENT_ID: ${{ vars.AZURECLIENTID }}
+      AZURE_TENANT_ID: ${{ vars.AZURETENANTID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURESUBSCRIPTIONID }}
 
     steps:
-      # 1. Checkout the code
-      - name: Checkout code
+      # ✅ Checkout source code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Azure Login using OIDC
+      # ✅ Authenticate to Azure using OIDC
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURECLIENTID }}
-          tenant-id: ${{ secrets.AZURETENANTID }}
-          subscription-id: ${{ secrets.AZURESUBSCRIPTIONID }}
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          enable-AzPSSession: false
 
-      # 3. Get secrets from Key Vault
-      # - name: Get secrets from Key Vault
-      #   id: kv
-      #   uses: azure/get-keyvault-secrets@v1
-      #   with:
-      #     keyvault: ${{ env.KEYVAULT_NAME }}
-      #     secrets: |
-      #       openai-api-key
-      #       openai-endpoint
-
+      # ✅ Fetch secrets from Azure Key Vault
       - name: Get secrets from Key Vault
+        id: get-secrets
         uses: azure/get-keyvault-secrets@v1
         with:
           keyvault: ${{ env.KEYVAULT_NAME }}
@@ -49,40 +46,26 @@ jobs:
             AZURE_OPENAI_API_KEY=openai-api-key
             AZURE_OPENAI_ENDPOINT=openai-endpoint
 
-
+      # ✅ Run Python app locally for validation (optional)
       - name: Run Python app
         run: python service.py
         env:
-          AZURE_OPENAI_API_KEY: ${{ env.AZURE_OPENAI_API_KEY }}
-          AZURE_OPENAI_ENDPOINT: ${{ env.AZURE_OPENAI_ENDPOINT }}
+          AZURE_OPENAI_API_KEY: ${{ steps.get-secrets.outputs.AZURE_OPENAI_API_KEY }}
+          AZURE_OPENAI_ENDPOINT: ${{ steps.get-secrets.outputs.AZURE_OPENAI_ENDPOINT }}
 
-      # # 4. Show that secrets are fetched (just for validation, remove later)
-      # - name: Validate secrets
-      #   run: |
-      #     echo "OpenAI API Key length: ${#OPENAI_API_KEY}"
-      #     echo "OpenAI Endpoint set? ${OPENAI_ENDPOINT:+yes}"
-      #   env:
-      #     OPENAI_API_KEY: ${{ steps.kv.outputs.openai-api-key }}
-      #     OPENAI_ENDPOINT: ${{ steps.kv.outputs.openai-endpoint }}
+      # ✅ Login to ACR using OIDC (no password needed)
+      - name: Login to Azure Container Registry
+        run: az acr login --name ${{ env.ACR_NAME }}
 
-      # 5. Login to ACR
-      - name: ACR Login
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.ACR_NAME }}.azurecr.io
-          client-id: ${{ secrets.AZURECLIENTID }}
-          tenant-id: ${{ secrets.AZURETENANTID }}
-          subscription-id: ${{ secrets.AZURESUBSCRIPTIONID }}
-
-      - name: Build and Push Docker Image
+      # ✅ Build and Push Docker image
+      - name: Build and Push Image
         run: |
           IMAGE_TAG=$(date +%Y%m%d%H%M%S)
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          docker build \
-            -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:$IMAGE_TAG \
-            -f project_planner/Dockerfile \
-            project_planner
+          docker build -t ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:$IMAGE_TAG \
+            -f project_planner/Dockerfile project_planner
           docker push ${{ env.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:$IMAGE_TAG
+
 
       # 6. Build and push Docker image with dynamic tag
 #       - name: Build and Push Docker Image
