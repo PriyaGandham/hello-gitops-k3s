@@ -1,0 +1,6 @@
+azure-storage-blob
+openai
+semantic_kernel
+streamlit
+azure-identity
+azure-keyvault-secrets
