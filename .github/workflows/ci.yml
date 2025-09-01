@@ -42,7 +42,7 @@ jobs:
       #       openai-endpoint
 
       - name: Get secrets from Key Vault
-        uses: azure/get-keyvault-secrets@v1
+        uses: azure/secrets-store
         with:
           keyvault: ${{ env.KEYVAULT_NAME }}
           secrets: |
