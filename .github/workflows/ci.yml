@@ -44,7 +44,7 @@ jobs:
           secrets: openai-api-key , openai-endpoint
 
       - name: Run Python app
-        run: python hello-gitops-k3s-1/project_planner/services.py
+        run: python project_planner/services.py
         env:
           AZURE_OPENAI_API_KEY: ${{ steps.get-secrets.outputs.openai-api-key }}
           AZURE_OPENAI_ENDPOINT: ${{ steps.get-secrets.outputs.openai-endpoint }}
