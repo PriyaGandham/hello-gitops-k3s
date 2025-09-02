@@ -43,8 +43,8 @@ jobs:
         with:
           keyvault: ${{ env.KEYVAULT_NAME }}
           secrets: |
-            "openai-api-key=AZURE_OPENAI_API_KEY"
-            "openai-endpoint=AZURE_OPENAI_ENDPOINT"
+             openai-api-key=AZURE_OPENAI_API_KEY
+             openai-endpoint=AZURE_OPENAI_ENDPOINT
 
       # ✅ Run Python app locally for validation (optional)
       - name: Run Python app
