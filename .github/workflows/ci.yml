@@ -41,9 +41,7 @@ jobs:
         uses: azure/get-keyvault-secrets@v1
         with:
           keyvault: ${{ env.KEYVAULT_NAME }}
-          secrets: |
-            openai-api-key
-            openai-endpoint
+          secrets: openai-api-key , openai-endpoint
 
       - name: Run Python app
         run: python service.py
